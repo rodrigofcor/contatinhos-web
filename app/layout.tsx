@@ -1,20 +1,21 @@
+import React from 'react'
 import './globals.css'
 import type { Metadata } from 'next'
 import { ubuntu } from '@/app/fonts'
 
 export const metadata: Metadata = {
-  title: 'Contatinhos',
-  description: 'A dating app',
+	title: 'Contatinhos',
+	description: 'A dating app',
 }
 
 export default function RootLayout({
-  children,
+	children,
 }: {
   children: React.ReactNode
 }) {
-  return (
-    <html lang="en">
-      <body className={ `${ubuntu.className}` }>{children}</body>
-    </html>
-  )
+	return (
+		<html lang="en">
+			<body className={ `${ubuntu.className}` }>{children}</body>
+		</html>
+	)
 }

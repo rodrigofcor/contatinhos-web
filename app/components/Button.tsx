@@ -1,6 +1,6 @@
 'use client'
 
-import React, { ReactNode, MouseEvent } from 'react';
+import React, { ReactNode, MouseEvent } from 'react'
 
 interface ButtonProps {
   className?: string
@@ -9,11 +9,11 @@ interface ButtonProps {
 }
 
 const Button: React.FC<ButtonProps> = ({className, children, onClick }) => {
-  return (
-    <button className={`${className} hover:opacity-60 transform hover:scale-105 transition-transform duration-300 ease-in-out`} onClick={onClick}>
-      {children}
-    </button>
-  )
+	return (
+		<button className={`${className} hover:opacity-60 transform hover:scale-105 transition-transform duration-300 ease-in-out`} onClick={onClick}>
+			{children}
+		</button>
+	)
 }
 
 export default Button
