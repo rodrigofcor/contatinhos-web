@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { rancho } from '@/app/fonts'
 import TextInput from '@/app/components/TextInput'
 import Button from '@/app/components/Button'
+import Link from 'next/link'
 
 export default function Home() {
 	const [email, setEmail] = useState('')
@@ -21,9 +22,9 @@ export default function Home() {
 				<TextInput type='password' placeholder='Senha' value={password} onChange={(e) => setPassword(e.target.value)} />
 
 				<div className='flex gap-5'>
-					<Button className='bg-red-light dark:bg-purple rounded-lg w-full p-1.5'>
-            Cria conta
-					</Button>
+					<Link className='w-full' href="/users/new">
+						<Button className='bg-red-light dark:bg-purple rounded-lg w-full p-1.5'>Criar conta</Button>
+					</Link>
 
 					<Button className='bg-pink-4 dark:bg-red-dark rounded-lg w-full p-1.5'>
             Entrar
