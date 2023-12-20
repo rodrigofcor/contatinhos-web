@@ -5,21 +5,30 @@ import React from 'react'
 interface ImageInputProps {
   className?: string
   id: string
-  value: string
+  imageUrl?: string
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const ImageInput: React.FC<ImageInputProps> =({className, id, placeholder, value, onChange }) => {
+const ImageInput: React.FC<ImageInputProps> =({className, id, imageUrl, onChange }) => {
 	return (
-		<div className={`${className} w-full`}>
-			<label htmlFor={id}>
-				<picture>
-					<img className=" object-cover opacity-100 transition-all duration-300 ease-in-out hover:opacity-50 hover:cursor-pointer rounded-3xl"
-						src='https://love.doghero.com.br/wp-content/uploads/2018/12/golden-retriever-1.png' alt='Selecione a imagem' />
-				</picture>
+		<div className={`${className} w-full h-full border-solid border-2 border-pink-3 dark:border-brown-2 rounded-3xl`}>
+			<label htmlFor={id} className='opacity-100 transition-all duration-300 ease-in-out hover:opacity-50 hover:cursor-pointer'>
+				{imageUrl && imageUrl !== '' ? (
+					<picture>
+						<img className="w-full h-full object-contain rounded-3xl"
+							src={imageUrl} alt='Alterar imagem' />
+					</picture>
+				): (
+					<div className='w-full h-full flex justify-center items-center'>
+						<picture>
+							<img className="w-14 h-14 object-contain opacity-100 transition-all duration-300 ease-in-out hover:opacity-50 hover:cursor-pointer rounded-3xl"
+								src='/images/addPhotoIco.svg' alt='Adicionar imagem' />
+						</picture>
+					</div>
+				)}
 			</label>
 
-			<input type='file' className='hidden' id={id} accept='image/jpeg, image/png' />
+			<input type='file' className='hidden' id={id} accept='image/jpeg, image/png' onChange={(e) => onChange(e)} />
 		</div>
 	)
 }
