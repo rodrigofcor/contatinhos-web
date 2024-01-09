@@ -19,7 +19,7 @@ const NewUserPage = () => {
 	]
 	const [gender, setGender] = useState('')
 
-	const [birthDate, setBirthDate] = useState('')
+	const [birthdate, setBirthdate] = useState('')
 
 	const [colleges, setColleges] = useState<Array<{id: string, shortName: string, fullName: string}>>([])
 	const [collegeId, setCollegeId] = useState('')
@@ -36,11 +36,13 @@ const NewUserPage = () => {
 	const [interests, setInterests] = useState<Array<{id: number, name: string, createdAt: string}>>([])
 	const [interestIds, setInterestIds] = useState<Array<string>>([])
 
+	const [images, setImages] = useState<Array<File | null>>([null, null, null, null])
+	const [imageUrls, setImageUrls] = useState<Array<string>>(['', '', '' , ''])
 
-	const [image, setImage] = useState<File | null>()
-	const [imageUrl, setImageUrl] = useState('')
+	const [password, setPassword] = useState('')
+	const [passwordCopy, setPasswordCopy] = useState('')
 
-	const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>, orderNumber: number) => {
 		if(!e.target || !e.target.files) {
 			return
 		}
@@ -50,8 +52,13 @@ const NewUserPage = () => {
 			return
 		}
 
-		setImage(newImage)
-		setImageUrl(URL.createObjectURL(newImage))
+		const newImages = [...images]
+		newImages[orderNumber] = newImage
+		setImages(newImages)
+
+		const newImageUrls = [...imageUrls]
+		newImageUrls[orderNumber] = URL.createObjectURL(newImage)
+		setImageUrls(newImageUrls)
 	}
 
 	useEffect(() => {
@@ -101,21 +108,66 @@ const NewUserPage = () => {
 		setInterestIds(newValues)
 	}
 
+	const save = async () => {
+		if(password !== passwordCopy) {
+			alert('As senhas não estão iguais.')
+			return
+		}
+
+		if(password.length < 0) {
+			alert('A senha deve conter ao menos 6 caracteres')
+			return
+		}
+
+		const formData = new FormData()
+
+		images.forEach((image, index) => {
+			if(!image) {
+				alert('Por favor selecionar todas as fotos')
+				return
+			}
+
+			formData.append(`image${index + 1}`, image)
+		})
+
+		formData.append('userData', JSON.stringify({
+			name,
+			email,
+			gender,
+			birthdate: `${birthdate}T00:00:00.000Z`,
+			collegeId,
+			courseId,
+			professionId,
+			description,
+			interestIds,
+			password
+		}))
+
+		try {
+			await fetch('http://localhost:3333/users', {
+				method: 'POST',
+				body: formData
+			})
+		} catch (error) {
+			console.error('Error:', error)
+		}
+	}
+
 	return (
 		<main className="h-screen flex justify-center items-center">
-			<div className='w-4/6 bg-white dark:bg-brown-3 dark:text-white px-6 py-8 rounded-lg flex flex-col gap-8'>
+			<div className='w-4/6 shadow-2xl bg-white dark:bg-brown-3 dark:text-white px-6 py-8 rounded-lg flex flex-col gap-8'>
 				<div className='flex justify-around'>
 					<div className='w-44 h-44'>
-						<ImageInput id={'id'} imageUrl={imageUrl} onChange={(e) => handleChangeImage(e)} />
+						<ImageInput id='image0' imageUrl={imageUrls[0]} onChange={(e) => handleChangeImage(e, 0)} />
 					</div>
 					<div className='w-44 h-44'>
-						<ImageInput id={'id'} imageUrl={imageUrl} onChange={(e) => handleChangeImage(e)} />
+						<ImageInput id='image1' imageUrl={imageUrls[1]} onChange={(e) => handleChangeImage(e, 1)} />
 					</div>
 					<div className='w-44 h-44'>
-						<ImageInput id={'id'} imageUrl={imageUrl} onChange={(e) => handleChangeImage(e)} />
+						<ImageInput id='image2' imageUrl={imageUrls[2]} onChange={(e) => handleChangeImage(e, 2)} />
 					</div>
 					<div className='w-44 h-44'>
-						<ImageInput id={'id'} imageUrl={imageUrl} onChange={(e) => handleChangeImage(e)} />
+						<ImageInput id='image3' imageUrl={imageUrls[3]} onChange={(e) => handleChangeImage(e, 3)} />
 					</div>
 				</div>
 
@@ -129,7 +181,7 @@ const NewUserPage = () => {
 
 				<div className='grid grid-cols-4 gap-8'>
 
-					<TextInput type='date' placeholder='Nascimento' value={birthDate} onChange={(e) => setBirthDate(e.target.value)} />
+					<TextInput type='date' placeholder='Nascimento' value={birthdate} onChange={(e) => setBirthdate(e.target.value)} />
 
 					<Select options={colleges.map(college => ({value: college.id, label: `${college.shortName} - ${college.fullName}`}))}
 						placeholder='Universidade (opicional)' value={collegeId} onChange={(e) => setCollegeId(e.target.value)} />
@@ -148,8 +200,14 @@ const NewUserPage = () => {
 						placeholder='Interesses (opicional)' values={interestIds} limit={12} onAddClick={(value) => addInterestId(value)} onRemoveClick={(value) => removeInterestId(value)} />
 				</div>
 
+				<div className='grid grid-cols-2 gap-8'>
+					<TextInput type='password' placeholder='Senha' value={password} onChange={e => setPassword(e.target.value)} />
+
+					<TextInput type='password' placeholder='Repetir senha' value={passwordCopy} onChange={e => setPasswordCopy(e.target.value)} />
+				</div>
+
 				<div className='flex justify-center'>
-					<Button className='bg-red-light dark:bg-purple rounded-lg w-72 p-2'>Salvar</Button>
+					<Button className='bg-red-light dark:bg-purple rounded-lg w-72 p-2' onClick={save}>Salvar</Button>
 				</div>
 			</div>
 		</main>

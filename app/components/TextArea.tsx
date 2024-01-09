@@ -14,7 +14,6 @@ interface TextAreaProps {
 
 const TextArea: React.FC<TextAreaProps> =({className, rows=4, id, placeholder, value, limit, onChange }) => {
 	const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		console.log(e)
 		const newValue = limit ? e.target.value.substring(0, limit) : e.target.value
 		onChange({ ...e, target: { ...e.target, value: newValue } })
 	}

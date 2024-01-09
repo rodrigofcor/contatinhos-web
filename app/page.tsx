@@ -12,7 +12,7 @@ export default function Home() {
 
 	return (
 		<main className="h-screen flex justify-center items-center">
-			<div className='bg-white dark:bg-brown-3 dark:text-white px-16 py-8 rounded-lg flex flex-col gap-8'>
+			<div className='shadow-2xl bg-white dark:bg-brown-3 dark:text-white px-16 py-8 rounded-lg flex flex-col gap-8'>
 				<h1 className={`${rancho.className} text-4xl`}>
           Novos contatinhos estão por vir!
 				</h1>

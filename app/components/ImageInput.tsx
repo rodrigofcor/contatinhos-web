@@ -12,7 +12,7 @@ interface ImageInputProps {
 const ImageInput: React.FC<ImageInputProps> =({className, id, imageUrl, onChange }) => {
 	return (
 		<div className={`${className} w-full h-full border-solid border-2 border-pink-3 dark:border-brown-2 rounded-3xl`}>
-			<label htmlFor={id} className='opacity-100 transition-all duration-300 ease-in-out hover:opacity-50 hover:cursor-pointer'>
+			<label htmlFor={id} className='opacity-100 transition-all duration-300 ease-in-out hover:scale-105 hover:opacity-50 hover:cursor-pointer'>
 				{imageUrl && imageUrl !== '' ? (
 					<picture>
 						<img className="w-full h-full object-contain rounded-3xl"
@@ -21,7 +21,7 @@ const ImageInput: React.FC<ImageInputProps> =({className, id, imageUrl, onChange
 				): (
 					<div className='w-full h-full flex justify-center items-center'>
 						<picture>
-							<img className="w-14 h-14 object-contain opacity-100 transition-all duration-300 ease-in-out hover:opacity-50 hover:cursor-pointer rounded-3xl"
+							<img className="w-14 h-14 object-contain rounded-3xl hover:scale-105"
 								src='/images/addPhotoIco.svg' alt='Adicionar imagem' />
 						</picture>
 					</div>
