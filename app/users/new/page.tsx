@@ -119,33 +119,54 @@ const NewUserPage = () => {
 			return
 		}
 
-		const formData = new FormData()
-
-		images.forEach((image, index) => {
+		images.forEach((image) => {
 			if(!image) {
 				alert('Por favor selecionar todas as fotos')
 				return
 			}
+		})
 
+		try {
+			const response = await fetch('http://localhost:3333/users', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					name,
+					email,
+					gender,
+					birthdate: `${birthdate}T00:00:00.000Z`,
+					collegeId,
+					courseId,
+					professionId,
+					description,
+					interestIds,
+					password
+				})
+			})
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`)
+			}
+
+			const id = await response.text()
+			await uploadImages(id)
+		} catch (error) {
+			console.error('Error:', error)
+		}
+	}
+
+	const uploadImages = async (userId: string) => {
+		const formData = new FormData()
+
+		images.forEach((image, index) => {
 			formData.append(`image${index + 1}`, image)
 		})
 
-		formData.append('userData', JSON.stringify({
-			name,
-			email,
-			gender,
-			birthdate: `${birthdate}T00:00:00.000Z`,
-			collegeId,
-			courseId,
-			professionId,
-			description,
-			interestIds,
-			password
-		}))
-
 		try {
-			await fetch('http://localhost:3333/users', {
-				method: 'POST',
+			await fetch(`http://localhost:3333/users/${userId}/images`, {
+				method: 'PUT',
 				body: formData
 			})
 		} catch (error) {
