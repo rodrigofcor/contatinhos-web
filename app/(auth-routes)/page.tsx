@@ -5,10 +5,28 @@ import { rancho } from '@/app/fonts'
 import TextInput from '@/app/components/TextInput'
 import Button from '@/app/components/Button'
 import Link from 'next/link'
+import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 export default function Home() {
+	const router = useRouter()
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
+
+	async function login() {
+		const result = await signIn('credentials', {
+			email,
+			password,
+			redirect: false,
+		})
+
+		if (result?.error) {
+			console.error(result)
+			return
+		}
+
+		router.replace('test')
+	}
 
 	return (
 		<main className="h-screen flex justify-center items-center">
@@ -26,7 +44,7 @@ export default function Home() {
 						<Button className='bg-red-light dark:bg-purple rounded-lg w-full p-1.5'>Criar conta</Button>
 					</Link>
 
-					<Button className='bg-pink-4 dark:bg-red-dark rounded-lg w-full p-1.5'>
+					<Button className='bg-pink-4 dark:bg-red-dark rounded-lg w-full p-1.5' onClick={login}>
             Entrar
 					</Button>
 				</div>
