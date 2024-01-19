@@ -2,6 +2,7 @@ import React from 'react'
 import './globals.css'
 import type { Metadata } from 'next'
 import { ubuntu } from '@/app/fonts'
+import NextAuthSessionProvider from '@/providers/sessionProviders'
 
 export const metadata: Metadata = {
 	title: 'Contatinhos',
@@ -15,7 +16,9 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en">
-			<body className={ `${ubuntu.className}` }>{children}</body>
+			<body className={ `${ubuntu.className}` }>
+				<NextAuthSessionProvider>{children}</NextAuthSessionProvider>
+			</body>
 		</html>
 	)
 }
