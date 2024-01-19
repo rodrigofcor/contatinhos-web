@@ -12,7 +12,7 @@ const nextAuthOptions: NextAuthOptions = {
 
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			async authorize(credentials, _) {
-				const response = await fetch('http://localhost:3333/login', {
+				const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/login`, {
 					method: 'POST',
 					headers: {
 						'Content-type': 'application/json'

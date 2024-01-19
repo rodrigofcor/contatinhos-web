@@ -64,19 +64,19 @@ const NewUserPage = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const resColleges = await fetch('http://localhost:3333/colleges')
+				const resColleges = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/colleges`)
 				const collegesData = await resColleges.json()
 				setColleges(collegesData)
 
-				const resCourses = await fetch('http://localhost:3333/courses')
+				const resCourses = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/courses`)
 				const coursesData = await resCourses.json()
 				setCourses(coursesData)
 
-				const resProfessions = await fetch('http://localhost:3333/professions')
+				const resProfessions = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/professions`)
 				const professionsData = await resProfessions.json()
 				setProfessions(professionsData)
 
-				const resInterests = await fetch('http://localhost:3333/interests')
+				const resInterests = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/interests`)
 				const interestsData = await resInterests.json()
 				setInterests(interestsData)
 			} catch (error) {
@@ -109,25 +109,31 @@ const NewUserPage = () => {
 	}
 
 	const save = async () => {
-		if(password !== passwordCopy) {
+		if (password !== passwordCopy) {
 			alert('As senhas não estão iguais.')
 			return
 		}
 
-		if(password.length < 0) {
+		if (password.length < 0) {
 			alert('A senha deve conter ao menos 6 caracteres')
 			return
 		}
 
+		let hasEmptyImage = false
 		images.forEach((image) => {
-			if(!image) {
-				alert('Por favor selecionar todas as fotos')
+			if (!image) {
+				hasEmptyImage = true
 				return
 			}
 		})
 
+		if (hasEmptyImage) {
+			alert('Por favor selecionar todas as fotos')
+			return
+		}
+
 		try {
-			const response = await fetch('http://localhost:3333/users', {
+			const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/users`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -147,11 +153,30 @@ const NewUserPage = () => {
 			})
 
 			if (!response.ok) {
+				if (response.status === 400) {
+					const resp = await response.json()
+
+					if (Array.isArray(resp)) {
+						const errors = resp.map((item) => {
+							return {
+								field: item.path[0],
+								message: item.message
+							}
+						})
+						alert(JSON.stringify(errors))
+						return
+					}
+
+					alert(resp.message)
+					return
+				}
+
 				throw new Error(`HTTP error! Status: ${response.status}`)
 			}
 
 			const id = await response.text()
 			await uploadImages(id)
+
 		} catch (error) {
 			console.error('Error:', error)
 		}
@@ -165,7 +190,7 @@ const NewUserPage = () => {
 		})
 
 		try {
-			await fetch(`http://localhost:3333/users/${userId}/images`, {
+			await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/users/${userId}/images`, {
 				method: 'PUT',
 				body: formData
 			})
