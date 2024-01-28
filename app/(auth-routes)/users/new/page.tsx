@@ -7,6 +7,7 @@ import Select from '@/app/components/Select'
 import MultipleSelect from '@/app/components/MultipleSelect'
 import Button from '@/app/components/Button'
 import ImageInput from '@/app/components/ImageInput'
+import Modal from '@/app/components/Modal'
 
 const NewUserPage = () => {
 	const [name, setName] = useState('')
@@ -41,6 +42,9 @@ const NewUserPage = () => {
 
 	const [password, setPassword] = useState('')
 	const [passwordCopy, setPasswordCopy] = useState('')
+
+	const [isModalOpen, setIsModalOpen] = useState(false)
+	const [errors, setErrors] = useState<Array<{field: string, message: string}>>([])
 
 	const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>, orderNumber: number) => {
 		if(!e.target || !e.target.files) {
@@ -110,12 +114,14 @@ const NewUserPage = () => {
 
 	const save = async () => {
 		if (password !== passwordCopy) {
-			alert('As senhas não estão iguais.')
+			setErrors([{field: 'Senha', message: 'As senhas não estão iguais.'}])
+			toggleModal()
 			return
 		}
 
-		if (password.length < 0) {
-			alert('A senha deve conter ao menos 6 caracteres')
+		if (password.length < 6) {
+			setErrors([{field: 'Senha', message: 'A senha deve conter ao menos 6 caracteres'}])
+			toggleModal()
 			return
 		}
 
@@ -128,7 +134,8 @@ const NewUserPage = () => {
 		})
 
 		if (hasEmptyImage) {
-			alert('Por favor selecionar todas as fotos')
+			setErrors([{field: 'Foto', message: 'Por favor selecionar todas as fotos.'}])
+			toggleModal()
 			return
 		}
 
@@ -157,17 +164,18 @@ const NewUserPage = () => {
 					const resp = await response.json()
 
 					if (Array.isArray(resp)) {
-						const errors = resp.map((item) => {
+						setErrors(resp.map((item) => {
 							return {
 								field: item.path[0],
 								message: item.message
 							}
-						})
-						alert(JSON.stringify(errors))
+						}))
+						toggleModal()
 						return
 					}
 
-					alert(resp.message)
+					setErrors([{field: 'Erro', message: resp.message}])
+					toggleModal()
 					return
 				}
 
@@ -199,8 +207,26 @@ const NewUserPage = () => {
 		}
 	}
 
+	const toggleModal = () => {
+		setIsModalOpen(!isModalOpen)
+	}
+
 	return (
 		<main className="h-screen flex justify-center items-center">
+			<Modal isOpen={isModalOpen} className='w-1/3' title='Erros' onCloseClick={toggleModal}>
+				<div className='flex flex-col gap-6'>
+					<ul className='list-disc list-inside'>
+						{errors.map((error, index) => (
+							<li key={index}><span className='font-semibold'>{error.field}</span>: <span className='opacity-70'>{error.message}</span></li>
+						))}
+					</ul>
+
+					<div className='flex justify-center'>
+						<Button className='bg-pink-4 dark:bg-red-dark rounded-lg w-36 p-2' onClick={toggleModal}>Ok</Button>
+					</div>
+				</div>
+			</Modal>
+
 			<div className='w-4/6 shadow-2xl bg-white dark:bg-brown-3 dark:text-white px-6 py-8 rounded-lg flex flex-col gap-8'>
 				<div className='flex justify-around'>
 					<div className='w-44 h-44'>
@@ -226,7 +252,6 @@ const NewUserPage = () => {
 				</div>
 
 				<div className='grid grid-cols-4 gap-8'>
-
 					<TextInput type='date' placeholder='Nascimento' value={birthdate} onChange={(e) => setBirthdate(e.target.value)} />
 
 					<Select options={colleges.map(college => ({value: college.id, label: `${college.shortName} - ${college.fullName}`}))}

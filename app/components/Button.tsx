@@ -5,7 +5,7 @@ import React, { ReactNode, MouseEvent } from 'react'
 interface ButtonProps {
   className?: string
   children?: ReactNode
-  onClick?: (event: MouseEvent<HTMLButtonElement>) => void
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 const Button: React.FC<ButtonProps> = ({className, children, onClick }) => {

@@ -15,6 +15,7 @@ const config: Config = {
 			},
 		},
 		colors: {
+			'black': '#000000',
 			'white': '#ffffff', // background
 			'brown': {
 				1: '#C3ACAC', // text
